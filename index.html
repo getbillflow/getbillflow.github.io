@@ -123,7 +123,7 @@
   </div>
 </section>
 
-<section>
+<section id="pricing">
   <div class="wrap">
     <h2>Simple yearly pricing</h2>
     <div class="pricing">
@@ -135,6 +135,7 @@
           <li>1-click WhatsApp reminders</li>
           <li>PDF statements &amp; ageing reports</li>
         </ul>
+        <button type="button" onclick="subscribe('standard')" style="display:block;margin:4px 20px 20px;padding:13px;text-align:center;background:linear-gradient(115deg,#6d28d9,#ec4899);color:#fff;font-weight:800;border:none;border-radius:11px;font-size:15px;cursor:pointer">Subscribe — ₹8,999/yr</button>
       </div>
       <div class="tier pro">
         <div class="badge">★ MOST POPULAR</div>
@@ -146,6 +147,7 @@
           <li>Quotations, stock &amp; parcel slips</li>
           <li>Salesman-wise dashboards</li>
         </ul>
+        <button type="button" onclick="subscribe('pro')" style="display:block;margin:4px 20px 20px;padding:13px;text-align:center;background:var(--gold);color:#4c1d95;font-weight:800;border:none;border-radius:11px;font-size:15px;cursor:pointer">Subscribe — ₹14,999/yr</button>
       </div>
       <div class="tier prm">
         <div class="top"><div class="nm">PREMIUM</div><div class="pr">₹24,999 <span>per year</span></div><div class="amc">Everything included + onsite visits</div></div>
@@ -156,9 +158,11 @@
           <li>AI promo flyer maker</li>
           <li>Onsite setup &amp; training</li>
         </ul>
+        <button type="button" onclick="subscribe('premium')" style="display:block;margin:4px 20px 20px;padding:13px;text-align:center;background:linear-gradient(115deg,#6d28d9,#ec4899);color:#fff;font-weight:800;border:none;border-radius:11px;font-size:15px;cursor:pointer">Subscribe — ₹24,999/yr</button>
       </div>
     </div>
-    <p class="pricenote">All plans are simple yearly subscriptions — setup, training, support and every new feature included • Free 7-day trial • Prices exclude GST</p>
+    <p class="pricenote">All plans are simple yearly subscriptions — setup, training, support and every new feature included • Free 7-day trial • Prices exclude GST (18%)</p>
+    <p class="pricenote" style="margin-top:8px">🔒 Secure checkout powered by <strong>Razorpay</strong> — pay by card, UPI or netbanking. Your <strong>GST invoice is emailed instantly</strong>, and your activation key follows by email/WhatsApp right after payment.</p>
   </div>
 </section>
 
@@ -178,5 +182,23 @@
   </div>
 </footer>
 
+<script>
+  // ===== Razorpay payment links =====
+  // Create one Razorpay "Payment Page" per plan (Dashboard -> Payment Pages), turn ON
+  // "Send GST invoice", then paste each page's URL between the quotes below.
+  // Leave a URL blank until it's ready -- that button then shows a friendly "call us"
+  // message instead of a broken link, so the site is never broken.
+  var PLANS = {
+    standard: { name: 'Standard', price: '₹8,999',  url: '' },
+    pro:      { name: 'Pro',      price: '₹14,999', url: '' },
+    premium:  { name: 'Premium',  price: '₹24,999', url: '' }
+  };
+  function subscribe(k){
+    var p = PLANS[k]; if(!p) return false;
+    if(p.url){ window.location.href = p.url; }
+    else { alert('Online payment for the ' + p.name + ' plan (' + p.price + '/year) is being set up.\n\nTo subscribe right now, call or WhatsApp +91 76981 13888 — we will send you a secure Razorpay payment link and your GST invoice.'); }
+    return false;
+  }
+</script>
 </body>
 </html>
