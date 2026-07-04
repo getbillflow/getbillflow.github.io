@@ -197,7 +197,7 @@
   // creates + verifies orders. The KEY_ID (public) is returned by /api/create-order,
   // so no secret ever lives in this page. Leave PAY_API blank until deployed — the
   // button then shows a friendly "call us" message instead of failing.
-  var PAY_API = '';
+  var PAY_API = 'https://billflow-pay-server.onrender.com';
   var PLAN_LABEL = { standard: 'Standard', pro: 'Pro', premium: 'Premium' };
 
   function subscribe(k){
