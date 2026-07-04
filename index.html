@@ -173,8 +173,8 @@
         <button type="button" onclick="subscribe('premium')" style="display:block;margin:4px 20px 20px;padding:13px;text-align:center;background:linear-gradient(115deg,#6d28d9,#ec4899);color:#fff;font-weight:800;border:none;border-radius:11px;font-size:15px;cursor:pointer">Subscribe — ₹24,999/yr</button>
       </div>
     </div>
-    <p class="pricenote">All plans are simple yearly subscriptions — setup, training, support and every new feature included • Free 7-day trial • Prices exclude GST (18%)</p>
-    <p class="pricenote" style="margin-top:8px">🔒 Secure checkout powered by <strong>Razorpay</strong> — pay by card, UPI or netbanking. Your <strong>GST invoice is emailed instantly</strong>, and your activation key follows by email/WhatsApp right after payment.</p>
+    <p class="pricenote">All plans are simple yearly subscriptions — setup, training, support and every new feature included • Free 7-day trial • Prices are <strong>inclusive of 18% GST</strong></p>
+    <p class="pricenote" style="margin-top:8px">🔒 Secure checkout by <strong>Razorpay</strong> — card, UPI or netbanking. Your <strong>activation key and GST invoice are emailed instantly</strong> after payment.</p>
   </div>
 </section>
 
@@ -201,40 +201,76 @@
   </div>
 </footer>
 
+<!-- Subscribe modal: collects business name + email, then shows the issued key -->
+<div id="bfModal" style="display:none;position:fixed;inset:0;background:rgba(20,10,40,.55);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:16px;max-width:430px;width:100%;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.35)">
+    <div id="bfForm">
+      <h3 style="margin:0 0 4px;font-size:20px;color:#6d28d9">Subscribe to <span id="bfPlan"></span></h3>
+      <p style="margin:0 0 16px;color:#6b6480;font-size:14px">Your activation key and GST invoice are emailed here the moment your payment succeeds.</p>
+      <label style="display:block;font-size:13px;font-weight:700;margin-bottom:4px;color:#374151">Business name <span style="color:#dc2626">*</span></label>
+      <input id="bfBiz" placeholder="e.g. Sharma Traders" autocomplete="organization" style="width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;margin-bottom:12px;font-size:15px;box-sizing:border-box">
+      <label style="display:block;font-size:13px;font-weight:700;margin-bottom:4px;color:#374151">Email <span style="color:#dc2626">*</span></label>
+      <input id="bfEmail" type="email" placeholder="you@business.com" autocomplete="email" style="width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;margin-bottom:6px;font-size:15px;box-sizing:border-box">
+      <div id="bfErr" style="color:#dc2626;font-size:13px;min-height:18px"></div>
+      <button id="bfGo" type="button" style="width:100%;margin-top:6px;padding:13px;background:linear-gradient(115deg,#6d28d9,#ec4899);color:#fff;font-weight:800;border:none;border-radius:11px;font-size:15px;cursor:pointer">Continue to payment →</button>
+      <button type="button" onclick="bfClose()" style="width:100%;margin-top:6px;padding:9px;background:transparent;color:#6b6480;border:none;font-size:13px;cursor:pointer">Cancel</button>
+    </div>
+    <div id="bfDone" style="display:none;text-align:center">
+      <div style="font-size:42px">✅</div>
+      <h3 style="margin:6px 0 4px;color:#059669;font-size:20px">Payment successful!</h3>
+      <p style="margin:0 0 14px;color:#6b6480;font-size:14px">Your key and GST invoice were emailed to <b id="bfDoneEmail"></b>. Keep this key safe:</p>
+      <div id="bfKey" style="font-size:19px;font-weight:800;letter-spacing:1px;background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:14px;word-break:break-all;color:#4c1d95"></div>
+      <p style="margin:12px 0 0;color:#6b6480;font-size:13px">Open BillFlow → the licence screen → enter your business name and paste this key.</p>
+      <button type="button" onclick="bfClose()" style="width:100%;margin-top:16px;padding:12px;background:#6d28d9;color:#fff;font-weight:700;border:none;border-radius:11px;font-size:15px;cursor:pointer">Done</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-  // ===== Razorpay Standard Checkout =====
-  // PAY_API = the URL of your deployed BillFlow pay-server (the billflow-pay-server
-  // folder, hosted on Render/Railway/Vercel). It holds the Razorpay key SECRET and
-  // creates + verifies orders. The KEY_ID (public) is returned by /api/create-order,
-  // so no secret ever lives in this page. Leave PAY_API blank until deployed — the
-  // button then shows a friendly "call us" message instead of failing.
+  // PAY_API = the deployed BillFlow pay-server. It holds the Razorpay + licence
+  // secrets and issues the key server-side; only the public key_id reaches this page.
   var PAY_API = 'https://billflow-pay-server.onrender.com';
   var PLAN_LABEL = { standard: 'Standard', pro: 'Pro', premium: 'Premium' };
+  var bfPlanKey = null;
 
   function subscribe(k){
-    var label = PLAN_LABEL[k] || k;
-    if(!PAY_API){
-      alert('Online payment for the ' + label + ' plan is being set up.\n\nTo subscribe right now, call or WhatsApp +91 76981 13888 — we will send you a secure payment link and your GST invoice.');
-      return false;
-    }
+    if(!PAY_API){ alert('Online payment is being set up. To subscribe now, call or WhatsApp +91 76981 13888.'); return false; }
+    bfPlanKey = k;
+    document.getElementById('bfPlan').textContent = PLAN_LABEL[k] || k;
+    document.getElementById('bfForm').style.display = 'block';
+    document.getElementById('bfDone').style.display = 'none';
+    document.getElementById('bfErr').textContent = '';
+    document.getElementById('bfModal').style.display = 'flex';
+    document.getElementById('bfBiz').focus();
+    return false;
+  }
+  function bfClose(){ document.getElementById('bfModal').style.display = 'none'; }
+
+  document.getElementById('bfGo').addEventListener('click', function(){
+    var biz = document.getElementById('bfBiz').value.trim();
+    var email = document.getElementById('bfEmail').value.trim();
+    var err = document.getElementById('bfErr');
+    if(!biz){ err.textContent = 'Please enter your business name (your licence is issued to it).'; return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent = 'Please enter a valid email — your key is sent here.'; return; }
+    err.textContent = 'Starting secure checkout…';
+    startPayment(bfPlanKey, biz, email);
+  });
+
+  function startPayment(k, business, email){
     var base = PAY_API.replace(/\/+$/, '');
     fetch(base + '/api/create-order', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan: k })
+      body: JSON.stringify({ plan: k, business: business, email: email })
     })
     .then(function(r){ return r.json(); })
     .then(function(o){
       if(!o || !o.ok){ throw new Error((o && o.error) || 'Could not start the payment.'); }
       var rzp = new Razorpay({
-        key: o.key_id,
-        order_id: o.order_id,
-        amount: o.amount,
-        currency: o.currency,
-        name: 'BillFlow',
-        description: o.name || ('BillFlow ' + label + ' — 1 year'),
-        image: 'https://getbillflow.github.io/icon.svg',
-        theme: { color: '#6d28d9' },
+        key: o.key_id, order_id: o.order_id, amount: o.amount, currency: o.currency,
+        name: 'BillFlow', description: o.name || 'BillFlow subscription',
+        image: 'https://getbillflow.github.io/icon.svg', theme: { color: '#6d28d9' },
+        prefill: { email: email, name: business },
         handler: function(resp){
           fetch(base + '/api/verify-payment', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -242,27 +278,29 @@
           })
           .then(function(r){ return r.json(); })
           .then(function(v){
-            if(v && v.ok){
-              alert('✅ Payment successful!\n\nYour GST invoice will be emailed, and your BillFlow activation key will be sent to you shortly.\n\nPayment ID: ' + v.payment_id);
+            if(v && v.ok && v.license_key){
+              document.getElementById('bfForm').style.display = 'none';
+              document.getElementById('bfKey').textContent = v.license_key;
+              document.getElementById('bfDoneEmail').textContent = v.email || email;
+              document.getElementById('bfDone').style.display = 'block';
+              document.getElementById('bfModal').style.display = 'flex';
+            } else if (v && v.ok){
+              alert('✅ Payment received! Your key will be emailed to you shortly. Payment ID: ' + (resp.razorpay_payment_id || ''));
+              bfClose();
             } else {
-              alert('⚠️ We received your payment but could not verify it automatically. If money was deducted, please call +91 76981 13888 with your Payment ID: ' + (resp.razorpay_payment_id || '') + ' — we will sort it out right away.');
+              alert('⚠️ Payment received but not auto-verified. Please call +91 76981 13888 with Payment ID ' + (resp.razorpay_payment_id || '') + '.');
             }
           })
-          .catch(function(){
-            alert('Payment received, but verification did not complete. Please call +91 76981 13888 with Payment ID ' + (resp.razorpay_payment_id || '') + '.');
-          });
+          .catch(function(){ alert('Payment received; verification is pending. Call +91 76981 13888 with Payment ID ' + (resp.razorpay_payment_id || '') + '.'); });
         },
-        modal: { ondismiss: function(){ /* customer closed the window — nothing charged */ } }
+        modal: { ondismiss: function(){ document.getElementById('bfErr').textContent = ''; } }
       });
       rzp.on('payment.failed', function(resp){
-        alert('Payment did not go through: ' + (resp.error && resp.error.description ? resp.error.description : 'please try again or use another method.'));
+        document.getElementById('bfErr').textContent = 'Payment failed: ' + (resp.error && resp.error.description ? resp.error.description : 'please try again.');
       });
       rzp.open();
     })
-    .catch(function(e){
-      alert('Sorry, we could not start the payment (' + e.message + ').\nPlease call or WhatsApp +91 76981 13888 and we will help you subscribe.');
-    });
-    return false;
+    .catch(function(e){ document.getElementById('bfErr').textContent = 'Could not start payment: ' + e.message + '. Call +91 76981 13888.'; });
   }
 </script>
 </body>
