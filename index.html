@@ -189,21 +189,67 @@
   </div>
 </footer>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-  // ===== Razorpay payment links =====
-  // Create one Razorpay "Payment Page" per plan (Dashboard -> Payment Pages), turn ON
-  // "Send GST invoice", then paste each page's URL between the quotes below.
-  // Leave a URL blank until it's ready -- that button then shows a friendly "call us"
-  // message instead of a broken link, so the site is never broken.
-  var PLANS = {
-    standard: { name: 'Standard', price: '₹8,999',  url: '' },
-    pro:      { name: 'Pro',      price: '₹14,999', url: '' },
-    premium:  { name: 'Premium',  price: '₹24,999', url: '' }
-  };
+  // ===== Razorpay Standard Checkout =====
+  // PAY_API = the URL of your deployed BillFlow pay-server (the billflow-pay-server
+  // folder, hosted on Render/Railway/Vercel). It holds the Razorpay key SECRET and
+  // creates + verifies orders. The KEY_ID (public) is returned by /api/create-order,
+  // so no secret ever lives in this page. Leave PAY_API blank until deployed — the
+  // button then shows a friendly "call us" message instead of failing.
+  var PAY_API = '';
+  var PLAN_LABEL = { standard: 'Standard', pro: 'Pro', premium: 'Premium' };
+
   function subscribe(k){
-    var p = PLANS[k]; if(!p) return false;
-    if(p.url){ window.location.href = p.url; }
-    else { alert('Online payment for the ' + p.name + ' plan (' + p.price + '/year) is being set up.\n\nTo subscribe right now, call or WhatsApp +91 76981 13888 — we will send you a secure Razorpay payment link and your GST invoice.'); }
+    var label = PLAN_LABEL[k] || k;
+    if(!PAY_API){
+      alert('Online payment for the ' + label + ' plan is being set up.\n\nTo subscribe right now, call or WhatsApp +91 76981 13888 — we will send you a secure payment link and your GST invoice.');
+      return false;
+    }
+    var base = PAY_API.replace(/\/+$/, '');
+    fetch(base + '/api/create-order', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: k })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(o){
+      if(!o || !o.ok){ throw new Error((o && o.error) || 'Could not start the payment.'); }
+      var rzp = new Razorpay({
+        key: o.key_id,
+        order_id: o.order_id,
+        amount: o.amount,
+        currency: o.currency,
+        name: 'BillFlow',
+        description: o.name || ('BillFlow ' + label + ' — 1 year'),
+        image: 'https://getbillflow.github.io/icon.svg',
+        theme: { color: '#6d28d9' },
+        handler: function(resp){
+          fetch(base + '/api/verify-payment', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(resp)
+          })
+          .then(function(r){ return r.json(); })
+          .then(function(v){
+            if(v && v.ok){
+              alert('✅ Payment successful!\n\nYour GST invoice will be emailed, and your BillFlow activation key will be sent to you shortly.\n\nPayment ID: ' + v.payment_id);
+            } else {
+              alert('⚠️ We received your payment but could not verify it automatically. If money was deducted, please call +91 76981 13888 with your Payment ID: ' + (resp.razorpay_payment_id || '') + ' — we will sort it out right away.');
+            }
+          })
+          .catch(function(){
+            alert('Payment received, but verification did not complete. Please call +91 76981 13888 with Payment ID ' + (resp.razorpay_payment_id || '') + '.');
+          });
+        },
+        modal: { ondismiss: function(){ /* customer closed the window — nothing charged */ } }
+      });
+      rzp.on('payment.failed', function(resp){
+        alert('Payment did not go through: ' + (resp.error && resp.error.description ? resp.error.description : 'please try again or use another method.'));
+      });
+      rzp.open();
+    })
+    .catch(function(e){
+      alert('Sorry, we could not start the payment (' + e.message + ').\nPlease call or WhatsApp +91 76981 13888 and we will help you subscribe.');
+    });
     return false;
   }
 </script>
