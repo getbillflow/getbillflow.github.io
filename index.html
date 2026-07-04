@@ -86,7 +86,19 @@
 <header>
   <div class="wrap">
     <div class="brandrow">
-      <img src="icon.svg" alt="BillFlow logo">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BillFlow logo" style="width:58px;height:58px;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.35);display:block;flex:none">
+        <defs>
+          <linearGradient id="hbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e40af"/><stop offset="0.55" stop-color="#102363"/><stop offset="1" stop-color="#0a1330"/></linearGradient>
+          <radialGradient id="hglow" cx="0.5" cy="0.30" r="0.65"><stop offset="0" stop-color="#3b82f6" stop-opacity="0.5"/><stop offset="1" stop-color="#3b82f6" stop-opacity="0"/></radialGradient>
+          <linearGradient id="hgold" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#fef3c7"/><stop offset="0.5" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/></linearGradient>
+        </defs>
+        <rect width="512" height="512" rx="112" fill="url(#hbg)"/><rect width="512" height="512" rx="112" fill="url(#hglow)"/>
+        <path d="M104 396 C 196 366, 250 326, 300 264 C 346 208, 372 174, 412 144" fill="none" stroke="#38bdf8" stroke-opacity="0.24" stroke-width="26" stroke-linecap="round"/>
+        <circle cx="150" cy="374" r="27" fill="url(#hgold)"/><circle cx="150" cy="374" r="27" fill="none" stroke="#fff7e0" stroke-opacity="0.55" stroke-width="4"/><circle cx="141" cy="365" r="7" fill="#ffffff" fill-opacity="0.45"/>
+        <circle cx="244" cy="306" r="37" fill="url(#hgold)"/><circle cx="244" cy="306" r="37" fill="none" stroke="#fff7e0" stroke-opacity="0.55" stroke-width="5"/><circle cx="232" cy="294" r="9" fill="#ffffff" fill-opacity="0.45"/>
+        <circle cx="352" cy="206" r="50" fill="url(#hgold)"/><circle cx="352" cy="206" r="50" fill="none" stroke="#fff7e0" stroke-opacity="0.6" stroke-width="6"/>
+        <text x="352" y="212" font-family="Georgia, serif" font-size="60" font-weight="700" fill="#7c2d12" text-anchor="middle" dominant-baseline="central">&#8377;</text>
+      </svg>
       <div>
         <div class="brandname">Bill<span>Flow</span></div>
         <div class="brandtag">Your Tally + WhatsApp, on autopilot.</div>
