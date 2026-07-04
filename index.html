@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BillFlow — Your Tally + WhatsApp, on autopilot</title>
+<meta name="description" content="BillFlow sends every Tally bill on WhatsApp and follows up every payment, automatically. Free 7-day trial for Windows + Tally Prime.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --g1:#6d28d9; --g2:#c026d3; --g3:#ec4899;
+    --gold:#fbbf24; --gold-lt:#fde68a;
+    --ink:#211a33; --muted:#6b6480; --line:#eae6f4; --bg:#faf8ff; --green:#059669;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.5}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+
+  header{background:linear-gradient(115deg,var(--g1) 0%,var(--g2) 55%,var(--g3) 100%);color:#fff;padding:46px 0 60px;position:relative}
+  header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,var(--gold),var(--gold-lt),var(--gold))}
+  .brandrow{display:flex;align-items:center;gap:16px;margin-bottom:34px}
+  .brandrow img{width:58px;height:58px;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.35)}
+  .brandname{font-size:38px;font-weight:800;letter-spacing:-.5px;line-height:1}
+  .brandname span{color:var(--gold)}
+  .brandtag{font-size:15px;color:#fde9ff;margin-top:6px;font-weight:600}
+  h1{font-size:clamp(28px,4.5vw,44px);font-weight:800;line-height:1.18;max-width:820px}
+  h1 em{color:var(--gold-lt);font-style:normal}
+  .sub{margin-top:14px;font-size:18px;color:#f3e4ff;max-width:720px}
+  .cta{display:inline-block;margin-top:28px;background:var(--gold);color:#4c1d95;font-size:19px;font-weight:800;
+       padding:15px 34px;border-radius:12px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  .cta:hover{background:var(--gold-lt)}
+  .cta small{display:block;font-size:12.5px;font-weight:600;margin-top:3px;color:#6d28d9}
+  .trust{margin-top:16px;font-size:14px;color:#fde9ff}
+
+  section{padding:52px 0}
+  section h2{font-size:28px;font-weight:800;color:var(--g1);margin-bottom:26px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:22px 18px;text-align:center}
+  .card .ico{font-size:34px;line-height:1}
+  .card h3{font-size:16.5px;font-weight:800;color:var(--g1);margin-top:12px}
+  .card p{font-size:14px;color:var(--muted);margin-top:7px}
+
+  .steps{background:var(--bg);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .steps ol{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;counter-reset:s}
+  .steps li{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 18px;counter-increment:s;position:relative}
+  .steps li::before{content:counter(s);position:absolute;top:-14px;left:16px;width:30px;height:30px;border-radius:50%;
+    background:linear-gradient(115deg,var(--g1),var(--g3));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .steps li b{display:block;margin-bottom:5px;color:var(--ink);font-size:15.5px}
+  .steps li span{font-size:13.5px;color:var(--muted)}
+
+  .pricing{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;align-items:stretch}
+  .tier{border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;background:#fff;overflow:visible}
+  .tier .top{padding:18px;color:#fff;text-align:center;border-radius:15px 15px 0 0}
+  .tier.std .top{background:#7a7290}
+  .tier.pro .top{background:linear-gradient(115deg,var(--g1),var(--g3))}
+  .tier.prm .top{background:var(--ink)}
+  .tier .nm{font-size:15px;font-weight:800;letter-spacing:1px}
+  .tier .pr{font-size:30px;font-weight:800;margin-top:5px}
+  .tier .pr span{display:block;font-size:12.5px;font-weight:600;opacity:.9;margin-top:3px}
+  .tier .amc{font-size:12px;margin-top:6px;opacity:.92}
+  .tier ul{list-style:none;padding:16px 20px;flex:1}
+  .tier li{font-size:14px;padding:7px 0 7px 26px;position:relative;border-bottom:1px dashed var(--line)}
+  .tier li:last-child{border-bottom:none}
+  .tier li::before{content:"✓";position:absolute;left:0;top:8px;width:17px;height:17px;border-radius:50%;
+    background:var(--green);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .tier li.plus{font-weight:800;color:var(--g1)}
+  .tier li.plus::before{background:var(--g1);content:"+"}
+  .tier.pro{border:3px solid var(--gold);box-shadow:0 10px 30px rgba(109,40,217,.15);position:relative}
+  .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:#5b21b6;
+    font-size:12px;font-weight:800;padding:4px 16px;border-radius:20px;white-space:nowrap}
+  .pricenote{margin-top:14px;font-size:13px;color:var(--muted)}
+
+  .req{font-size:14.5px;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+  .req b{color:var(--ink)}
+
+  footer{background:linear-gradient(115deg,var(--g1),var(--g3));color:#fff;padding:38px 0;margin-top:24px}
+  footer .frow{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+  footer .fcta{font-size:22px;font-weight:800}
+  footer .fcta span{color:var(--gold-lt)}
+  footer .fphone{font-size:24px;font-weight:800;white-space:nowrap}
+  footer .fsmall{margin-top:14px;font-size:12.5px;color:#f3e4ff}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brandrow">
+      <img src="icon.svg" alt="BillFlow logo">
+      <div>
+        <div class="brandname">Bill<span>Flow</span></div>
+        <div class="brandtag">Your Tally + WhatsApp, on autopilot.</div>
+      </div>
+    </div>
+    <h1>Every bill on WhatsApp. Every payment followed up.<br><em>From ₹25 a day, on the Tally you already run.</em></h1>
+    <p class="sub">BillFlow plugs into the Tally Prime you already use — no re-typing, no new software to learn. Five-minute setup, and it starts working the same day.</p>
+    <a class="cta" href="BillFlow-Trial-Setup.zip" download>⬇ Download free 7-day trial
+      <small>Windows · full product, no watermarks · ~34 MB</small></a>
+    <div class="trust">No card needed · Your data never leaves your PC · Works offline</div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>What it does for your shop</h2>
+    <div class="cards">
+      <div class="card"><div class="ico">📲</div><h3>Bills on WhatsApp</h3><p>Every new Tally bill reaches your customer instantly — from your own WhatsApp number.</p></div>
+      <div class="card"><div class="ico">💰</div><h3>Daily collection list</h3><p>Exactly who to call today. Promises and follow-ups tracked automatically.</p></div>
+      <div class="card"><div class="ico">🧾</div><h3>Instant quotations</h3><p>Branded quotes, WhatsApp-ready in 30 seconds. Stock and parcel slips included.</p></div>
+      <div class="card"><div class="ico">🔒</div><h3>Your data, your PC</h3><p>No cloud. Everything stays in your shop. Works even when the internet doesn't.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="steps">
+  <div class="wrap">
+    <h2>Install it yourself in 2 minutes</h2>
+    <ol>
+      <li><b>Download &amp; extract</b><span>Click the download button, then right-click the zip → "Extract All" to your Desktop.</span></li>
+      <li><b>Run setup.bat</b><span>One double-click. It sets everything up and opens the app in your browser by itself.</span></li>
+      <li><b>Log in &amp; connect Tally</b><span>Log in (owner / admin123), point it at your Tally Prime, scan the WhatsApp QR once — done.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Simple yearly pricing</h2>
+    <div class="pricing">
+      <div class="tier std">
+        <div class="top"><div class="nm">STANDARD</div><div class="pr">₹8,999 <span>per year</span></div><div class="amc">Setup, support &amp; updates included</div></div>
+        <ul>
+          <li>Tally sync — bills &amp; parties</li>
+          <li>Daily follow-up dashboard</li>
+          <li>1-click WhatsApp reminders</li>
+          <li>PDF statements &amp; ageing reports</li>
+        </ul>
+      </div>
+      <div class="tier pro">
+        <div class="badge">★ MOST POPULAR</div>
+        <div class="top"><div class="nm">PRO</div><div class="pr">₹14,999 <span>per year</span></div><div class="amc">Setup, support &amp; updates included</div></div>
+        <ul>
+          <li class="plus">Everything in Standard</li>
+          <li>Auto WhatsApp on every new bill</li>
+          <li>Bulk reminders in one click</li>
+          <li>Quotations, stock &amp; parcel slips</li>
+          <li>Salesman-wise dashboards</li>
+        </ul>
+      </div>
+      <div class="tier prm">
+        <div class="top"><div class="nm">PREMIUM</div><div class="pr">₹24,999 <span>per year</span></div><div class="amc">Everything included + onsite visits</div></div>
+        <ul>
+          <li class="plus">Everything in Pro</li>
+          <li>Warranty &amp; replacement register</li>
+          <li>Staff attendance &amp; logins</li>
+          <li>AI promo flyer maker</li>
+          <li>Onsite setup &amp; training</li>
+        </ul>
+      </div>
+    </div>
+    <p class="pricenote">All plans are simple yearly subscriptions — setup, training, support and every new feature included • Free 7-day trial • Prices exclude GST</p>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="req"><b>Requirements:</b> a Windows PC with Tally Prime at your shop. WhatsApp sending uses your own WhatsApp (one-time QR link) — no per-message charges. Email and AI extras are optional.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="frow">
+      <div class="fcta"><span>Try it free for 7 days</span> — then activate with a key over one phone call.</div>
+      <div class="fphone">📞 +91 76981 13888</div>
+    </div>
+    <div class="fsmall">BillFlow Business Suite. Installed on your own PC — your data never leaves your shop.</div>
+  </div>
+</footer>
+
+</body>
+</html>
