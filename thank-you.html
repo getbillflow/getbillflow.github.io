@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thank you — BillFlow</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+  :root{--g1:#6d28d9;--g2:#c026d3;--g3:#ec4899;--gold:#fbbf24;--ink:#211a33;--muted:#6b6480;--line:#eae6f4}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:#faf8ff;line-height:1.6}
+  .top{background:linear-gradient(115deg,var(--g1),var(--g3));padding:26px 0}
+  .wrap{max-width:600px;margin:0 auto;padding:0 20px}
+  .top .wrap{display:flex;align-items:center;gap:14px}
+  .top svg{width:50px;height:50px;border-radius:12px}
+  .top .bn{font-size:24px;font-weight:800;color:#fff}
+  .top .bn span{color:var(--gold)}
+  main{padding:40px 0 60px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:34px 28px;text-align:center;box-shadow:0 12px 40px rgba(109,40,217,.08)}
+  .tick{font-size:52px}
+  h1{font-size:26px;font-weight:800;color:#059669;margin:8px 0 6px}
+  .sub{color:var(--muted);font-size:15px;margin-bottom:22px}
+  .keybox{background:#faf5ff;border:1px solid #e9d5ff;border-radius:12px;padding:16px;margin:0 0 8px}
+  .keybox .lbl{font-size:12px;font-weight:700;color:var(--g1);letter-spacing:1px;text-transform:uppercase}
+  .keybox .key{font-size:22px;font-weight:800;letter-spacing:1px;color:#4c1d95;word-break:break-all;margin-top:6px}
+  .copy{margin-top:10px;background:var(--g1);color:#fff;border:none;border-radius:9px;padding:9px 18px;font-size:14px;font-weight:700;cursor:pointer}
+  .steps{text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:22px}
+  .steps h3{font-size:15px;color:var(--g1);margin-bottom:8px}
+  .steps ol{margin:0;padding-left:20px}
+  .steps li{font-size:14.5px;margin-bottom:6px;color:#37324a}
+  .dl{display:inline-block;margin-top:20px;background:var(--gold);color:#4c1d95;font-weight:800;text-decoration:none;padding:13px 26px;border-radius:11px}
+  .support{margin-top:22px;color:var(--muted);font-size:13.5px}
+  a{color:var(--g1)}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BillFlow">
+    <defs>
+      <linearGradient id="tbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e40af"/><stop offset="0.55" stop-color="#102363"/><stop offset="1" stop-color="#0a1330"/></linearGradient>
+      <linearGradient id="tgold" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#fef3c7"/><stop offset="0.5" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/></linearGradient>
+    </defs>
+    <rect width="512" height="512" rx="112" fill="url(#tbg)"/>
+    <path d="M104 396 C 196 366, 250 326, 300 264 C 346 208, 372 174, 412 144" fill="none" stroke="#38bdf8" stroke-opacity="0.24" stroke-width="26" stroke-linecap="round"/>
+    <circle cx="150" cy="374" r="27" fill="url(#tgold)"/><circle cx="244" cy="306" r="37" fill="url(#tgold)"/>
+    <circle cx="352" cy="206" r="50" fill="url(#tgold)"/>
+    <text x="352" y="212" font-family="Georgia, serif" font-size="60" font-weight="700" fill="#7c2d12" text-anchor="middle" dominant-baseline="central">&#8377;</text>
+  </svg>
+  <div class="bn">Bill<span>Flow</span></div>
+</div></div>
+
+<main><div class="wrap">
+  <div class="card">
+    <div class="tick">✅</div>
+    <h1>Thank you — payment successful!</h1>
+    <p class="sub" id="sub">Your subscription is active. Your activation key and GST invoice have been emailed to you.</p>
+
+    <div class="keybox" id="keybox" style="display:none">
+      <div class="lbl">Your activation key</div>
+      <div class="key" id="key"></div>
+      <button class="copy" id="copyBtn" type="button">Copy key</button>
+    </div>
+
+    <div class="steps">
+      <h3>How to activate</h3>
+      <ol>
+        <li>If you haven't yet, <a href="index.html">download &amp; install BillFlow</a> on your Windows PC.</li>
+        <li>Open BillFlow and go to the licence screen.</li>
+        <li>Enter your <strong>business name</strong> exactly as you gave it, and paste your <strong>activation key</strong>.</li>
+        <li>You're subscribed for one year. 🎉</li>
+      </ol>
+    </div>
+
+    <a class="dl" href="index.html">← Back to BillFlow</a>
+    <p class="support">Didn't get the email? Check spam, or contact <a href="mailto:getbillflow@gmail.com">getbillflow@gmail.com</a> · +91 76981 13888</p>
+  </div>
+</div></main>
+
+<script>
+  (function(){
+    try {
+      var k = sessionStorage.getItem('bf_key');
+      var e = sessionStorage.getItem('bf_email');
+      if (k) {
+        document.getElementById('key').textContent = k;
+        document.getElementById('keybox').style.display = 'block';
+      }
+      if (e) {
+        document.getElementById('sub').innerHTML = 'Your subscription is active. Your activation key and GST invoice have been emailed to <strong>' + e + '</strong>.';
+      }
+      var btn = document.getElementById('copyBtn');
+      if (btn && k) btn.addEventListener('click', function(){
+        navigator.clipboard.writeText(k).then(function(){ btn.textContent = 'Copied ✓'; }, function(){});
+      });
+    } catch(_){}
+  })();
+</script>
+</body>
+</html>

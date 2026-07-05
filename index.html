@@ -278,15 +278,12 @@
           })
           .then(function(r){ return r.json(); })
           .then(function(v){
-            if(v && v.ok && v.license_key){
-              document.getElementById('bfForm').style.display = 'none';
-              document.getElementById('bfKey').textContent = v.license_key;
-              document.getElementById('bfDoneEmail').textContent = v.email || email;
-              document.getElementById('bfDone').style.display = 'block';
-              document.getElementById('bfModal').style.display = 'flex';
-            } else if (v && v.ok){
-              alert('✅ Payment received! Your key will be emailed to you shortly. Payment ID: ' + (resp.razorpay_payment_id || ''));
-              bfClose();
+            if(v && v.ok){
+              // Pass the key/email to the thank-you page via sessionStorage (kept out of the
+              // URL), then redirect there — a distinct page that ONLY buyers reach, which is
+              // what an ad platform tracks as a conversion.
+              try { if(v.license_key) sessionStorage.setItem('bf_key', v.license_key); sessionStorage.setItem('bf_email', v.email || email); } catch(_){}
+              window.location.href = 'thank-you.html';
             } else {
               alert('⚠️ Payment received but not auto-verified. Please call +91 76981 13888 with Payment ID ' + (resp.razorpay_payment_id || '') + '.');
             }
