@@ -54,7 +54,7 @@
   <div class="card">
     <div class="tick">✅</div>
     <h1>Thank you — payment successful!</h1>
-    <p class="sub" id="sub">Your subscription is active. Your activation key and GST invoice have been emailed to you.</p>
+    <p class="sub" id="sub">Your subscription is active. Your activation key and invoice have been emailed to you.</p>
 
     <div class="keybox" id="keybox" style="display:none">
       <div class="lbl">Your activation key</div>
@@ -87,7 +87,7 @@
         document.getElementById('keybox').style.display = 'block';
       }
       if (e) {
-        document.getElementById('sub').innerHTML = 'Your subscription is active. Your activation key and GST invoice have been emailed to <strong>' + e + '</strong>.';
+        document.getElementById('sub').innerHTML = 'Your subscription is active. Your activation key and invoice have been emailed to <strong>' + e + '</strong>.';
       }
       var btn = document.getElementById('copyBtn');
       if (btn && k) btn.addEventListener('click', function(){
